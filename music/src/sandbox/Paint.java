@@ -34,19 +34,22 @@ public class Paint extends Window {
         G.clear(g);
         Color c = G.rndColor();
         g. setColor(c);
-//        g.setColor(Color.blue);
+        g.setColor(Color.blue);
         g.fillOval(100,100,200,300);
-//        g.drawRect(100,100,200,300);
+        g.drawRect(100,100,200,300);
         g.drawLine(100,600,600,100);
+
         String msg = "Dude";
         int x = 400, y = 200;
-        g.drawString("Dude",400,200);
+        g.drawString("Dude", x, y);
+
         g.fillOval(400,200,2,2);
         FontMetrics fm = g.getFontMetrics();
         int a = fm.getAscent(), d = fm.getDescent();
         int w = fm.stringWidth(msg);
         g.drawRect(x,y-a, w, a+d);
         g.setColor(Color.black);
+
         g.drawString("Clicks, " +  clicks, 400, 400);
         //thePath.draw(g);
         thePic.draw(g);

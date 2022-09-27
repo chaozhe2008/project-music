@@ -1,5 +1,6 @@
 package graphics;
 
+import javax.xml.stream.XMLInputFactory;
 import java.awt.*;
 import java.util.Random;
 
@@ -12,6 +13,9 @@ public class G {
         g.setColor(Color.white);
         g.fillRect(0, 0, 5000, 5000);
     }
+    public static void drawCircle(Graphics g, int x, int y, int r) {
+        g.drawOval(x - r, y - r, 2 * r, 2 * r);
+    }
     //-----------------------------V-----------------------------// Vector
 
     public static class V{
@@ -22,6 +26,7 @@ public class G {
             this.y = y;
         }
         public void add(V v){x += v.x; y += v.y;};
+        public void set(V v){this.x = v.x; this.y = v.y;}
     }
     //-----------------------------VS-----------------------------//
 
@@ -46,18 +51,48 @@ public class G {
     //-----------------------------LoHi-----------------------------//
 
     public static class LoHi{
-
+        public int lo, hi;
+        public LoHi(int min, int max){lo = min;hi = max;}
+        public void add(int x){if (x < lo){lo = x;} if (x > hi){hi = x;}}
+        public void set(int x){lo = x; hi = x;}
+        public int size(){return hi-lo==0 ? 1 : hi-lo;}
     }
     //-----------------------------BBox-----------------------------// Bounding Box
-
     public static class BBox{
+        public LoHi h, v;
+        public BBox(){h = new LoHi(0, 0); v = new LoHi(0, 0);}
+        public void set(int x, int y){h.set(x); v.set(y);}
+        public void add(V v){h.add(v.x); this.v.add(v.y);}
+        public void add(int x, int y){h.add(x); this.v.add(y);}
+        public VS getNewVS(){return new VS(h.lo, v.lo, h.size(), v.size());}
+        public void draw(Graphics g){g.drawRect(h.lo, v.lo, h.size(), v.size());}
 
     }
     //-----------------------------PL-----------------------------// Pounding Line
 
     public static class PL{
+        public V[] points;
+        public PL(int count){
+            points = new V[count];
+            for(int i = 0; i < count; i++){points[i] = new V(0,0);}
+        }
+        public int size(){return points.length;}
+        public void drawN(Graphics g, int n){
+            for(int i = 1; i < n; i++){
+                g.drawLine(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+            }
+        }
+        public void drawNDots(Graphics g, int n) {
+            for (int i = 0; i < n; i++) {
+                drawCircle(g, points[i].x, points[i].y, 2);
+            }
 
-    }
-
-
+        }
+        public void draw(Graphics g){drawN(g, points.length);}
+        }
 }
+
+
+
+
+
