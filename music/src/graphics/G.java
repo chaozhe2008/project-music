@@ -19,6 +19,7 @@ public class G {
     //-----------------------------V-----------------------------// Vector
 
     public static class V{
+        public static Transform T = new Transform();
         public int x,y;
         public V(int x, int y){this.set(x, y);}
         public void set(int x, int y){
@@ -27,6 +28,32 @@ public class G {
         }
         public void add(V v){x += v.x; y += v.y;};
         public void set(V v){this.x = v.x; this.y = v.y;}
+        public void setT(V v){set(v.tx(), v.ty());}
+        public int tx(){ return x*T.n/T.d + T.dx;}
+        public int ty(){ return y*T.n/T.d + T.dy;}
+        //---------------------Transform--------------------------//
+        public static class Transform{ //x' = x * n/d + dx, y' = y * n/d + dy
+            public int dx, dy, n, d;
+            public void setScale(int oW, int oH, int nW, int nH){     //  old width/height new width/height
+                n = (nW > nH) ? nW : nH;  //pick max between h and w to keep inside the box
+                d = (oW > oH) ? oW : oH;
+            }
+            public int offSet(int oX, int oW, int nX, int nW){         //oX, oY; nX, nY : 新老方框的坐标
+                return (-oX - oW/2)*n/d + nX + nW/2;
+            }
+            public void set(VS oVS, VS nVS){
+                setScale(oVS.size.x, oVS.size.y, nVS.size.x, nVS.size.y);
+                dx = offSet(oVS.loc.x, oVS.size.x, nVS.loc.x, nVS.size.x);
+                dy = offSet(oVS.loc.y, oVS.size.y, nVS.loc.y, nVS.size.y);
+            }
+            public void set(BBox oB, VS nVS){
+                setScale(oB.h.size(),oB.h.size(), nVS.size.x, nVS.size.y);
+                dx = offSet(oB.h.lo, oB.h.size(), nVS.loc.x, nVS.size.x);
+                dy = offSet(oB.v.lo, oB.v.size(), nVS.loc.y, nVS.size.y); //可能有错
+            }
+
+
+        }
     }
     //-----------------------------VS-----------------------------//
 
@@ -52,10 +79,10 @@ public class G {
 
     public static class LoHi{
         public int lo, hi;
-        public LoHi(int min, int max){lo = min;hi = max;}
+        public LoHi(int min, int max){lo = min; hi = max;}
         public void add(int x){if (x < lo){lo = x;} if (x > hi){hi = x;}}
         public void set(int x){lo = x; hi = x;}
-        public int size(){return hi-lo==0 ? 1 : hi-lo;}
+        public int size(){return hi - lo==0 ? 1 : hi-lo;}
     }
     //-----------------------------BBox-----------------------------// Bounding Box
     public static class BBox{
@@ -77,6 +104,11 @@ public class G {
             for(int i = 0; i < count; i++){points[i] = new V(0,0);}
         }
         public int size(){return points.length;}
+        public void transform(){
+            for(int i = 0; i < points.length; i++){
+                points[i].setT(points[i]);
+            }
+        }
         public void drawN(Graphics g, int n){
             for(int i = 1; i < n; i++){
                 g.drawLine(points[i-1].x, points[i-1].y, points[i].x, points[i].y);

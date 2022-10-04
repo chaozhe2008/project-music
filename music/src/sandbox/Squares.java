@@ -35,11 +35,9 @@ public class Squares extends Window implements ActionListener {
         BACKGROUND.c = Color.white;
         BACKGROUND.size.set(5000,5000);
         theList.add(BACKGROUND);
-
-
     }
     public static final int W = UC.initialWindowWidth; //final:不变的(可以大写)
-    public static final int H = UC.initialWindowWidth;
+    public static final int H = UC.initialWindowHeight;
     public Squares(){super(
             "Squares",W, H);
         timer = new Timer(30, this);
@@ -130,27 +128,28 @@ public class Squares extends Window implements ActionListener {
         }
 
     //--------------------------List-----------------------//
-    public static class List extends ArrayList<Square> implements I.Draw{
-            public void draw(Graphics g){for(Square s: this){
-                s.draw(g);
+        public static class List extends ArrayList<Square> implements I.Draw {
+            public void draw(Graphics g) {
+                for (Square s : this) {
+                    s.draw(g);
                 }
             }
-            public Square hit(int x, int y){
+
+            public Square hit(int x, int y) {
                 Square res = null;
-                for (Square s: this){
-                    if (s.hit(x,y)){
+                for (Square s : this) {
+                    if (s.hit(x, y)) {
                         res = s;
                     }
                 }
                 return res;
             }
 
-        public void addNew(int x, int y){
-            add(new Square(x,y));
+            public void addNew(int x, int y) {
+                add(new Square(x, y));
+            }
         }
     }
-    }
-
 
 
 }

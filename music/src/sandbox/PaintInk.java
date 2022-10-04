@@ -17,6 +17,12 @@ public class PaintInk extends Window{
         inkList.show(g);
         g.setColor(Color.red);
         Ink.BUFFER.show(g);
+        if(inkList.size() > 1){
+            int last = inkList.size() - 1;
+            int dist = inkList.get(last).norm.dist(inkList.get(last-1).norm);
+            g.setColor((dist < UC.noMatchDist ? Color.GREEN : Color.red)); //超出最大距离 提示未能识别
+            g.drawString("dist: " + dist, 600, 60);
+        }
         g.drawString("points: " + Ink.BUFFER.n, 600, 30);
     }
     public void mousePressed(MouseEvent me){
