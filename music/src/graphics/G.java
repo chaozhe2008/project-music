@@ -2,6 +2,7 @@ package graphics;
 
 import javax.xml.stream.XMLInputFactory;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Random;
 
 public class G {
@@ -18,7 +19,7 @@ public class G {
     }
     //-----------------------------V-----------------------------// Vector
 
-    public static class V{
+    public static class V implements Serializable{
         public static Transform T = new Transform();
         public int x,y;
         public V(int x, int y){this.set(x, y);}
@@ -31,6 +32,8 @@ public class G {
         public void setT(V v){set(v.tx(), v.ty());}
         public int tx(){ return x*T.n/T.d + T.dx;}
         public int ty(){ return y*T.n/T.d + T.dy;}
+
+        public void blend(V v, int k){set((k * x + v.x)/(k + 1), (k * y + v.y)/(k + 1));}
         //---------------------Transform--------------------------//
         public static class Transform{ //x' = x * n/d + dx, y' = y * n/d + dy
             public int dx, dy, n, d;
@@ -47,7 +50,7 @@ public class G {
                 dy = offSet(oVS.loc.y, oVS.size.y, nVS.loc.y, nVS.size.y);
             }
             public void set(BBox oB, VS nVS){
-                setScale(oB.h.size(),oB.h.size(), nVS.size.x, nVS.size.y);
+                setScale(oB.h.size(),oB.v.size(), nVS.size.x, nVS.size.y);
                 dx = offSet(oB.h.lo, oB.h.size(), nVS.loc.x, nVS.size.x);
                 dy = offSet(oB.v.lo, oB.v.size(), nVS.loc.y, nVS.size.y); //可能有错
             }
@@ -97,7 +100,7 @@ public class G {
     }
     //-----------------------------PL-----------------------------// Pounding Line
 
-    public static class PL{
+    public static class PL implements Serializable {
         public V[] points;
         public PL(int count){
             points = new V[count];

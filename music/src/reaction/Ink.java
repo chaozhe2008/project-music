@@ -5,6 +5,7 @@ import music.I;
 import music.UC;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Ink implements I.Show{
@@ -42,16 +43,16 @@ public class Ink implements I.Show{
 //        draw(g);
 
     //-----------------------Norm-------------------------------//
-    public static class Norm extends G.PL{
+    public static class Norm extends G.PL implements Serializable {
         public static final int N = UC.normSampleSize;
         public static final int MAX = UC.normCoordinateSize;
         public static final G.VS NCS = new G.VS(0, 0, MAX, MAX);
         public Norm(){
             super (N);
-            G.PL temp = BUFFER.subSample(N);
+            BUFFER.subSample(this);
             G.V.T.set(BUFFER.bbox, NCS);
-            temp.transform();
-            for(int i = 0; i < N; i++){this.points[i].set(temp.points[i]);}
+            this.transform();
+            for(int i = 0; i < N; i++){this.points[i].set(this.points[i]);}
         }
         public int dist(Norm n) {
             int res = 0;
@@ -67,6 +68,9 @@ public class Ink implements I.Show{
             for (int i = 1; i < N; i++){g.drawLine(points[i-1].tx(), points[i-1].ty(), points[i].tx(), points[i].ty());}
         }
 
+        public void blend(Norm norm, int n){
+            for(int i = 0; i < N; i ++){points[i].blend(norm.points[i], n);}
+        }
     }
 
     //------------------------Buffer----------------------------//
@@ -76,12 +80,11 @@ public class Ink implements I.Show{
         public G.BBox bbox = new G.BBox();
 
         private Buffer(){super(MAX);}
-        public G.PL subSample(int k){
-            G.PL res = new G.PL(k);
-            for (int i = 0; i < k; i++){
-                res.points[i].set(this.points[i * (n - 1)/(k - 1)]);
+        public void subSample(G.PL pl){
+            int k = pl.points.length;
+            for (int i = 0; i < k; i++) {
+                pl.points[i].set(this.points[i * (n - 1) / (k - 1)]);
             }
-            return res;
         }
         public void add(int x, int y){if(n<MAX){points[n++].set(x,y);bbox.add(x, y);}}
 
