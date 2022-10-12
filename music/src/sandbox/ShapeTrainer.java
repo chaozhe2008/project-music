@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import static sandbox.PaintInk.inkList;
 
 public class ShapeTrainer extends Window{
+    public static void main(String [] args){(Window.PANEL = new ShapeTrainer()).launch();}
     public ShapeTrainer(){super("ShapeTrainer", UC.initialWindowWidth, UC.initialWindowHeight);}
     public static String UNKNOWN = " <- this name is unknown";
     public static String KNOWN = " <- this is known shape";
@@ -71,7 +72,7 @@ public class ShapeTrainer extends Window{
 //    }
     public void mouseReleased(MouseEvent me){
         Ink ink = new Ink();
-        Shape.DB.train(currName, ink.norm);
+        Shape.DB.train(currName, ink);
         setState();
         repaint();
     }
