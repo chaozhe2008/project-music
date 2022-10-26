@@ -3,20 +3,42 @@ package sandbox;
 import graphics.G;
 import graphics.Window;
 import music.Page;
+import music.Sys;
 import music.UC;
 import reaction.Gesture;
 import reaction.Ink;
 import reaction.Layer;
+import reaction.Reaction;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class Music extends Window {
-    static {new Layer("BACK"); new Layer("FORE");}
+    static {
+        new Layer("BACK");
+        new Layer("NOTE");
+        new Layer("FORE");
+    }
     public static Page PAGE;
     public static void main(String[] args){(PANEL = new Music()).launch();}
     public Music(){
         super("Music Editor", UC.initialWindowWidth, UC.initialWindowHeight);
+        Reaction.initialReactions.addReaction(new Reaction("E-E"){
+
+            public int bid(Gesture gest) {
+                return 10;
+            }
+
+            public void act(Gesture gest) {
+                int y = gest.vs.yM();
+                Sys.Fmt sysFmt = new Sys.Fmt();
+                PAGE  = new Page(sysFmt);
+                PAGE.margins.top = y;
+                PAGE.addNewSys();
+                PAGE.addNewStaff(0);
+                this.disable();
+            }
+        });
     }
     public void paintComponent(Graphics g){
         G.clear(g);

@@ -17,6 +17,7 @@ public class Gesture {
             Gesture gest = Gesture.getNew(ink); // can fail if unrecognized
             Ink.BUFFER.clear();
             if (gest != null){
+                System.out.println("Saw: " + gest.shape.name);
 //                Reaction r = Reaction.best(gest); // can fail
 //                if (r != null){r.act(gest);}
                 if(gest.shape.name.equals("N-N")){undo();}else{gest.doGesture();}
