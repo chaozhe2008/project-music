@@ -12,4 +12,6 @@ public class UC {
     public static final int defaultStaffSpace = 8;
     public static final int BarToMarginSnap = 20;
     public static final String ShapeDBFilename = "ShapeDB.dat";
+    public static final String fontName = "Sinfonia";
+    public static final int snapTime = 50;
 }
