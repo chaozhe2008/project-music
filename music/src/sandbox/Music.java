@@ -47,12 +47,9 @@ public class Music extends Window {
         g.drawString("Music", 100, 30);
         Ink.BUFFER.show(g);
         Layer.ALL.show(g);
-//        if(PAGE != null){
-//            Glyph.CLEF_G.showAt(g, 8, 100, PAGE.margins.top + 4 * 8);
-//            Glyph.HEAD_HALF.showAt(g, 8, 200, PAGE.margins.top + 4 * 8);
-//            Glyph.HEAD_Q.showAt(g, 8, 300, PAGE.margins.top + 4 * 8);
-//            Glyph.HEAD_W.showAt(g, 8, 400, PAGE.margins.top + 4 * 8);
-//        }
+        int H = 32, y = 100 + 4 * H;
+        Glyph.HEAD_Q.showAt(g, H, 200, y);
+        g.drawRect(200, y - H, 24 * H/10, 24 * H/10);
     }
 
     public void mousePressed(MouseEvent me){Gesture.AREA.dn(me.getX(), me.getY());repaint();}

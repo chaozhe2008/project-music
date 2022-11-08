@@ -14,4 +14,7 @@ public class UC {
     public static final String ShapeDBFilename = "ShapeDB.dat";
     public static final String fontName = "Sinfonia";
     public static final int snapTime = 50;
+    public static final int augDotOffset = 24;
+    public static final int augDotSpace = 24;
+
 }

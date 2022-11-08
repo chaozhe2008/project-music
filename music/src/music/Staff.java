@@ -86,6 +86,23 @@ public class Staff extends Mass {  //"E":Creating a new system, "E-W":Adding a s
                 new Rest(Staff.this, t);
             }
         });
+
+        addReaction(new Reaction("E-S") {
+            @Override
+            public int bid(Gesture gest) {
+                int x = gest.vs.xL(), y = gest.vs.yM();
+                if (x < PAGE.margins.left || x > PAGE.margins.right){return UC.noBid;}
+                int H = Staff.this.fmt.H, top = Staff.this.yTop(), bot = Staff.this.yBot();
+                if(y < top || y > bot){return UC.noBid;}
+                return 10;
+            }
+            @Override
+            public void act(Gesture gest) {
+                Time t = Staff.this.sys.getTime(gest.vs.xL());
+                (new Rest(Staff.this, t)).incFlag();
+            }
+        });
+
     }
 
     public int sysOff(){return sys.fmt.staffOffSet.get(iStaff);}
