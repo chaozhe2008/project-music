@@ -7,7 +7,7 @@ import reaction.Reaction;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Head extends Mass {
+public class Head extends Mass implements Comparable<Head>{
     public Staff staff;
     public int line;
     public Time time;
@@ -25,7 +25,6 @@ public class Head extends Mass {
 //        line = ((y - top + H/2) / H) - 1;
         this.line = staff.lineOfY(y);
 //        System.out.println("line: " + line);
-//        time.heads.add(this);
 
         addReaction(new Reaction("S-S") {
             public int bid(Gesture gest) {
@@ -55,28 +54,55 @@ public class Head extends Mass {
                 }
             }
         });
+        addReaction(new Reaction("DOT") { //dot belongs to stem, all heads on a stem share same dot notation
+            public int bid(Gesture gest) {
+                if (Head.this.stem == null){return UC.noBid;}
+                int xh = Head.this.x(), yh = Head.this.y(), h = Head.this.staff.fmt.H, w = Head.this.w();
+                int x = gest.vs.xM(), y = gest.vs.yM();
+                if (x < xh || x > xh + 2 * w || y < yh - h || y > yh + h){return UC.noBid;}
+                return Math.abs(xh + w - x) + Math.abs(yh - y);
+            }
+
+
+            public void act(Gesture gest) {
+                Head.this.stem.cycleDot(); // multi dots bug need to be fixed later
+            }
+        });
+    }
+
+    public int compareTo(Head h) { // sorting heads: first compare staff, if equal, compare line
+        return(staff.iStaff != h.staff.iStaff ? staff.iStaff - h.staff.iStaff : this.line - h.line);
     }
 
     public int w(){return 24 * staff.fmt.H/10;}
 
     public void show(Graphics g){
         int H = staff.fmt.H;
-        g.setColor(stem == null ? Color.RED : Color.BLACK);
+        g.setColor(wrongSide ? Color.RED : Color.BLACK); // this line is to test wrongSide function
         (forcedGlyph != null ? forcedGlyph : normalGlyph()).showAt(g, H, x(), y());
+        if (stem != null){
+            int off = UC.augDotOffset, sp = UC.augDotSpace;
+            for (int i = 0; i < stem.nDot; i++){
+                g.fillOval(time.x + off + i * sp, y() - 3*H/2, 2*H/3, 2*H/3);
+            }
+        }
     }
 
     public int x(){
-        //Stub - placeholder
-        return time.x;
+        int res = time.x;
+        if (wrongSide){res += (stem != null && stem.isUp ? w() : -w());} //shift wrongSide heads
+        return res;
     }
 
     public int y(){return staff.yLine(line);}
     public Glyph normalGlyph(){
-        //Stub
+        if (stem == null){return Glyph.HEAD_Q;}
+        if (stem.nFlag == -1){return Glyph.HEAD_HALF;}
+        if (stem.nFlag == -2){return Glyph.HEAD_W;}
         return Glyph.HEAD_Q;
     }
     public void deleteHead(){
-        //stub
+        // stub
         time.heads.remove(this);
     }
 
@@ -94,6 +120,9 @@ public class Head extends Mass {
         s.heads.add(this);
         stem = s;
     }
+
+
+
     //------------------------List-------------------------//
     public static class List extends ArrayList<Head> {}
 }
