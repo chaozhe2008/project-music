@@ -4,15 +4,18 @@ import reaction.Gesture;
 import reaction.Reaction;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class Stem extends Duration{ //line on notes, three rules (pic)
+public class Stem extends Duration implements Comparable<Stem>{ //line on notes, three rules (pic)
     public Head.List heads = new Head.List();
     public boolean isUp = true;
-    public Stem(boolean up){
+    public Sys sys;
+    public Beam beam = null;
+    public Stem(boolean up, Sys sys){
         isUp = up;
-
+        this.sys = sys;
         addReaction(new Reaction("E-E") { //increment flag on stem
             public int bid(Gesture gest) {
                 int y = gest.vs.yM(), x1 = gest.vs.xL(), x2 = gest.vs.xM();
@@ -78,7 +81,7 @@ public class Stem extends Duration{ //line on notes, three rules (pic)
         return h.time.x + (isUp ? h.w() : 0); //up stem on the right side of note, down stem on the left
     }
 
-    public void deleteStem(){deleteMass();}
+    public void deleteStem(){deleteMass(); sys.stems.remove(this);}
     public void setWrongSides(){
         Collections.sort(heads);
         // first head  is the top one(down stem)/ bottom one(up stem), which naturally goes to the right side
@@ -93,5 +96,21 @@ public class Stem extends Duration{ //line on notes, three rules (pic)
             // if on same staff and distance <= 1 then see if previous one is on the wrong side
             ph = nh;
         }
+    }
+
+    @Override
+    public int compareTo(Stem s) {return x() - s.x();}
+
+    //-------------------------------------List--------------------------------//
+    public static class List extends ArrayList<Stem> {
+        public int yMin = 1000000, yMax = -1000000;
+        public void addStem(Stem s){
+            add(s);
+            if(s.yLo() < yMin){yMin = s.yLo();}
+            if(s.yHi() < yMax){yMin = s.yHi();}
+        }
+
+        public boolean fastReject(int y1, int y2){return y1 > yMax || y2 < yMin;}
+        public void sort(){Collections.sort(this);}
     }
 }
