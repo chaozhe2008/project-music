@@ -21,6 +21,15 @@ public class Beam extends Mass {
         addStem(l);
     }
 
+    public static boolean verticalLineCrossSegment(int x, int y1, int y2, int bX, int bY, int eX, int eY) {
+        if (x < bX || x > eX){return false;}
+        int y = yOfX(x, bX, bY, eX, eY);
+        if (y1 < y2){
+            return y1 < y && y < y2;
+        }else{
+            return y2 < y && y < y1;}
+    }
+
     public void show(Graphics g){
         g.setColor(Color.black);
         drawBeamGroup(g);
@@ -29,7 +38,7 @@ public class Beam extends Mass {
     public void drawBeamGroup(Graphics g){
         setMasterBeam();
         Stem firstStem = first();
-        int h = UC.defaultStaffSpace, sH = firstStem.isUp ? h : -h;
+        int h = UC.defaultStaffSpace, sH = firstStem.isUp ? h : -h; // signed h
         int nPrev = 0, nCurr = firstStem.nFlag, nNext = stems.get(1).nFlag; // track number of flags on stems
         int pX, cX = firstStem.x(), bX = cX + 3 * h;
 
@@ -41,19 +50,18 @@ public class Beam extends Mass {
             cX = sCurr.x();
             nPrev = nCurr;
             nCurr = nNext;
-            nNext = (cur < stems.size() - 1 ? stems.get(cur + 1).nFlag : 0);
+            nNext = (cur < (stems.size() - 1) ? stems.get(cur + 1).nFlag : 0);
             int nBack = Math.min(nPrev, nCurr);
-            drawBeamStack(g, 0, nBack, pX, cX, sH);
-
+            drawBeamStack(g, 0, nBack, pX, cX, sH) ;
             if(nCurr > nPrev && nCurr > nNext){  // Beam-lets
+                g.setColor(Color.red);
                 if(nPrev < nNext){
                     bX = cX + 3*h;
-                    drawBeamStack(g, nNext, nCurr, cX, bX, sH);
+                } else {
+                    bX = cX - 3 * h;
                 }
-            }else{
-                    bX = cX - 3*h;
-                    drawBeamStack(g, nPrev, nCurr, cX, bX, sH);
-                }
+            }
+            g.setColor(Color.BLACK);
         }
     }
     public void addStem(Stem s){
