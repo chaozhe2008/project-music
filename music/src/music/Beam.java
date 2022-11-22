@@ -115,5 +115,14 @@ public class Beam extends Mass {
             g.fillPolygon(poly);
         }
     }
+
+    public void removeStem(Stem stem) {
+        if (stem == first() || stem == last()) {
+            deleteBeam();
+        }else{
+            stems.remove(stem);
+            stems.sort();
+        }
+    }
 }
 

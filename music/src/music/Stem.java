@@ -99,6 +99,7 @@ public class Stem extends Duration implements Comparable<Stem>{ //line on notes,
     public Head lastHead(){return heads.get(isUp ? 0 : heads.size() - 1);}
 
     public int yFirstHead(){
+        if (heads.size() == 0){return 200;} //should never happen
         Head h = firstHead();
         return h.staff.yLine(h.line);
     }
@@ -123,11 +124,18 @@ public class Stem extends Duration implements Comparable<Stem>{ //line on notes,
     public int yHi() {return isUp ? yFirstHead() : yBeamEnd();}
 
     public int x(){
+        if(heads.size() == 0){return 100;}
         Head h = firstHead();
         return h.time.x + (isUp ? h.w() : 0); //up stem on the right side of note, down stem on the left
     }
 
-    public void deleteStem(){deleteMass(); sys.stems.remove(this);}
+    public void deleteStem(){
+        if (heads.size() != 0){
+            System.out.println("Deleting stem that has heads on it");
+        }
+        if (beam != null){beam.removeStem(this);}
+        deleteMass();
+        sys.stems.remove(this);}
     public void setWrongSides(){
         Collections.sort(heads);
         // first head  is the top one(down stem)/ bottom one(up stem), which naturally goes to the right side
@@ -142,6 +150,16 @@ public class Stem extends Duration implements Comparable<Stem>{ //line on notes,
             // if on same staff and distance <= 1 then see if previous one is on the wrong side
             ph = nh;
         }
+    }
+    @Override
+    public void decFlag(){
+        if(nFlag > -2) {
+            nFlag--;
+        }
+        if(nFlag <= 0 && beam != null){
+            beam.deleteBeam();
+        }
+
     }
 
     @Override

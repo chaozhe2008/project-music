@@ -81,7 +81,7 @@ public class Page extends Mass {
 
         //-------------------------Margins-----------------------//
         public static class Margins {
-            private static int M = 50;
+            private static int M = UC.defaultPageMargin;
             public int top = M, left = M, bot = UC.initialWindowHeight - M, right = UC.initialWindowWidth - M;
         }
 

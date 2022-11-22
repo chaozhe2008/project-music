@@ -16,5 +16,7 @@ public class UC {
     public static final int snapTime = 50;
     public static final int augDotOffset = 24;
     public static final int augDotSpace = 24;
+    public static final int initialClefOffset = 30;
+    public static final int defaultPageMargin = 50;
 
 }
